@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large video recordings (original footage & renders)
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.webm
+
+# Temporary logs & scratch
+*.log
+out.txt
+err.txt
+log.txt
+test_log.txt
+test_maria.wav
+migrate_files.py
+make_subtitles.py
+
+# Windows thumbnail caches
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE / VS Code
+.vscode/
+.idea/
+*.swp
+*.swo

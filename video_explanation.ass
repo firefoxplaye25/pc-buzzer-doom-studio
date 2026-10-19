@@ -1,0 +1,41 @@
+[Script Info]
+Title: Doom no Buzzer do PC - Explicacao Tecnica WinRing0
+ScriptType: v4.00+
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709
+PlayResX: 1280
+PlayResY: 720
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: HeaderBadge, Arial, 14, &H00FFFFFF, &H000000FF, &H00D09000, &H1510141C, 1, 0, 0, 0, 100, 100, 0.8, 0, 3, 2, 0, 7, 20, 20, 15, 1
+Style: TechCard, Arial, 14, &H00F0F4F8, &H000000FF, &H002E3846, &H080D111A, 0, 0, 0, 0, 100, 100, 0.3, 0, 3, 2, 0, 7, 20, 20, 48, 1
+Style: OutroCard, Arial, 18, &H00FFFFFF, &H000000FF, &H0000C8FF, &H100D111A, 1, 0, 0, 0, 100, 100, 0.8, 0, 3, 3, 0, 5, 20, 20, 20, 1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.50,0:00:18.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H00D7FF&}🔊 PROJETO HARDWARE {\c&HFFFFFF&}| DOOM (1993) NO BUZZER DA PLACA-MÃE
+Dialogue: 0,0:00:00.80,0:00:17.50,TechCard,,20,20,15,,{\fad(400,300)\b1\c&H00F0FF&}⚡ O QUE ESTÁ ACONTECENDO AQUI?\N{\b0\c&HFFFFFF&}Todo o som do jogo (música E1M1 e tiros) sai direto do {\b1\c&H50FF50&}speaker piezoelétrico da placa-mãe{\b0\c&HFFFFFF&}!\NVeja na webcam à direita o gabinete real com o buzzer vibrando.
+Dialogue: 0,0:00:18.50,0:00:36.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H00D7FF&}🔊 PROJETO HARDWARE {\c&HFFFFFF&}| ÁUDIO FÍSICO 100% REAL
+Dialogue: 0,0:00:19.00,0:00:35.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H00F0FF&}🎯 NENHUMA CAIXA DE SOM OU FONE CONECTADO\N{\b0\c&HFFFFFF&}Não é som emulado pelo Windows. O que você escuta é a ressonância mecânica pura\ndo speaker de 4 pinos recebendo pulsos elétricos de onda quadrada.
+Dialogue: 0,0:00:36.50,0:00:58.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H0080FF&}⚠️ O DESAFIO TÉCNICO {\c&HFFFFFF&}| POR QUE O BUZZER NÃO TOCA NO WIN 10/11?
+Dialogue: 0,0:00:37.00,0:00:57.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H0080FF&}1. BLOQUEIO DE RING 3 NO WINDOWS X64\N{\b0\c&HFFFFFF&}Em versões modernas do Windows, programas comuns rodam em Ring 3 (User Mode).\nA Microsoft bloqueou instruções diretas de porta I/O (IN/OUT) no chip PIT 8254.\nO comando Beep() da API é redirecionado para o driver de som normal.
+Dialogue: 0,0:00:58.50,0:01:22.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H0080FF&}⚠️ O DESAFIO TÉCNICO {\c&HFFFFFF&}| ACESSO DIRETO AO HARDWARE
+Dialogue: 0,0:00:59.00,0:01:21.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H0080FF&}2. POR QUE O HARDWARE PRECISA DE RING 0?\N{\b0\c&HFFFFFF&}Para o buzzer apitar fisicamente, precisamos escrever nas portas:\n• {\c&H00FFFF&}Porta 0x43{\c&HFFFFFF&}: PIT Modo onda quadrada (0xB6)\n• {\c&H00FFFF&}Porta 0x42{\c&HFFFFFF&}: Divisor de Frequência = 1193180 / Freq\n• {\c&H00FFFF&}Porta 0x61{\c&HFFFFFF&}: Speaker Control (bits 0 e 1 ativam a saída física)
+Dialogue: 0,0:01:22.50,0:01:48.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H50FF50&}🛠️ A SOLUÇÃO {\c&HFFFFFF&}| COMO FUNCIONA A DLL WINRING0
+Dialogue: 0,0:01:23.00,0:01:47.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H50FF50&}A CHAVE: WinRing0x64.dll + WinRing0x64.sys\N{\b0\c&HFFFFFF&}A WinRing0 é um driver de Kernel de baixo nível.\nAo iniciar com {\c&H00FFFF&}InitializeOls(){\c&HFFFFFF&} como Administrador, ela ganha permissão em Ring 0\ne expõe as funções {\c&H50FF50&}WriteIoPortByte(){\c&HFFFFFF&} e {\c&H50FF50&}ReadIoPortByte(){\c&HFFFFFF&} para o programa!
+Dialogue: 0,0:01:48.50,0:02:11.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H50FF50&}🎮 CHOCOLATE DOOM {\c&HFFFFFF&}| CÓDIGO FONTE MODIFICADO
+Dialogue: 0,0:01:49.00,0:02:10.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H00E5FF&}COMO O DOOM FOI MODIFICADO:\N{\b0\c&HFFFFFF&}Modificamos o driver de áudio do jogo ({\c&H00FFFF&}pcsound_win32.c{\c&HFFFFFF&}).\nEle carrega a WinRing0x64 e envia cada efeito sonoro e nota da trilha E1M1\ndiretamente para a porta 0x61 em tempo real com prioridade de canais!
+Dialogue: 0,0:02:11.50,0:02:33.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H00D7FF&}💻 TRANSIÇÃO {\c&HFFFFFF&}| EXECUTANDO COMO ADMINISTRADOR
+Dialogue: 0,0:02:12.00,0:02:32.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H00D7FF&}PRIVILÉGIO ELEVADO (ADMINISTRADOR)\N{\b0\c&HFFFFFF&}Veja no vídeo: o script {\c&H50FF50&}iniciar_como_administrador.bat{\c&HFFFFFF&} é chamado com 'RunAs'.\nSem elevação, o Windows bloqueia o driver de kernel .sys e a DLL não abre as portas.
+Dialogue: 0,0:02:33.50,0:03:03.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H00E5FF&}🎵 PC BUZZER MUSIC STUDIO {\c&HFFFFFF&}| CHIPTUNE JUKEBOX EM PYTHON
+Dialogue: 0,0:02:34.00,0:03:02.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H00E5FF&}INTERFACE GRÁFICA PYTHON + HARDWARE_BUZZER.PY\N{\b0\c&HFFFFFF&}Criamos um aplicativo completo com osciloscópio animado!\nEle lê partituras e converte notas na frequência exata em Hertz para a placa-mãe.\nOuvindo agora: Super Mario Bros e Tetris (Korobeiniki)!
+Dialogue: 0,0:03:03.50,0:03:33.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H00E5FF&}🎵 PC BUZZER MUSIC STUDIO {\c&HFFFFFF&}| SÍNTESE 1-BIT RETRO
+Dialogue: 0,0:03:04.00,0:03:32.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H00E5FF&}ONDA QUADRADA PURA (1-BIT AUDIO)\N{\b0\c&HFFFFFF&}O piezoelétrico vibra alternando entre HIGH (1) e LOW (0).\nA velocidade dessa oscilação define o tom (880 Hz = Lá5, 1047 Hz = Dó6).\nO slider de velocidade altera o andamento (BPM) mantendo a afinação!
+Dialogue: 0,0:03:33.50,0:04:13.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H50FF50&}🎹 PIANO AO VIVO {\c&HFFFFFF&}| RESPOSTA INSTANTÂNEA
+Dialogue: 0,0:03:34.00,0:04:12.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H50FF50&}TECLADO DO PC VIRA SINTETIZADOR EM TEMPO REAL\N{\b0\c&HFFFFFF&}Na aba 'Piano Buzzer ao Vivo', tocar nas teclas (A, W, S, E, D, F...) apita o buzzer na hora!\nComo o WinRing0 escreve direto nas portas de I/O do barramento,\na latência é praticamente zero (<1 milissegundo)!
+Dialogue: 0,0:04:13.50,0:04:38.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H00D7FF&}📜 RTTTL & CHIPTUNES {\c&HFFFFFF&}| TOQUES CLÁSSICOS DE CELULAR
+Dialogue: 0,0:04:14.00,0:04:37.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H00D7FF&}SUPORTE AO PADRÃO RTTTL DOS CELULARES NOKIA\N{\b0\c&HFFFFFF&}O estúdio também interpreta partituras em formato RTTTL clássico!\nAgora tocando: Plants vs Zombies (Brainiac Maniac) com transposição de oitavas.
+Dialogue: 0,0:04:38.50,0:04:51.00,HeaderBadge,,20,20,15,,{\fad(300,300)\c&H50FF50&}✅ RESUMO DO PROCESSO {\c&HFFFFFF&}| PASSO A PASSO COMPLETO
+Dialogue: 0,0:04:39.00,0:04:50.50,TechCard,,20,20,15,,{\fad(300,300)\b1\c&H50FF50&}COMO REPLICAR ESSE PROJETO:\N{\b0\c&HFFFFFF&}1. Plugue um buzzer piezoelétrico de 4 pinos no conector SPEAKER da placa-mãe.\n2. Utilize WinRing0x64.dll e WinRing0x64.sys no seu código.\n3. Escreva nas portas 0x42/0x43 (PIT) e 0x61 (Speaker) executando como Administrador!\nDOOM e músicas rodando no hardware autêntico com perfeição!
